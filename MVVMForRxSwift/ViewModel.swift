@@ -13,14 +13,14 @@ import RxRelay
 import Action
 
 class ViewModel {
-    private let inputsConnecter = InputsConnecter()
-    private let outputsConnecter = OutputsConnecter()
+    private let inputsConnector = InputsConnector()
+    private let outputsConnector = OutputsConnector()
     
     private let model = Model()
     
     init() {
         // inputs
-        _ = self.inputsConnecter.tapRelay.bind(to: self.model.increment.inputs)
+        _ = self.inputsConnector.tapRelay.bind(to: self.model.increment.inputs)
         // outputs
         _ = self.model.increment.errors.compactMap {
                 switch $0 {
@@ -29,20 +29,20 @@ class ViewModel {
                 case let .underlyingError(error):
                     return error.localizedDescription
                 }
-            }.bind(to: self.outputsConnecter.errorMessageRelay)
+            }.bind(to: self.outputsConnector.errorMessageRelay)
         
         _ = self.model.count.map { String($0) }
-            .bind(to: self.outputsConnecter.textRelay)
+            .bind(to: self.outputsConnector.textRelay)
     }
 }
 
 extension ViewModel: ViewModelType {
-    var inputs: ViewModelInputs { self.inputsConnecter }
-    var outputs: ViewModelOutputs { self.outputsConnecter }
+    var inputs: ViewModelInputs { self.inputsConnector }
+    var outputs: ViewModelOutputs { self.outputsConnector }
 }
 
 private extension ViewModel {
-    class InputsConnecter {
+    class InputsConnector {
         let tapRelay: PublishRelay<()>
         let tap: AnyObserver<()>
         
@@ -56,7 +56,7 @@ private extension ViewModel {
         }
     }
 
-    class OutputsConnecter {
+    class OutputsConnector {
         let errorMessageRelay = PublishRelay<String>()
         let errorMessage: Signal<String>
         
@@ -70,8 +70,8 @@ private extension ViewModel {
     }
 }
 
-extension ViewModel.InputsConnecter: ViewModelInputs {
+extension ViewModel.InputsConnector: ViewModelInputs {
 }
 
-extension ViewModel.OutputsConnecter: ViewModelOutputs {
+extension ViewModel.OutputsConnector: ViewModelOutputs {
 }
